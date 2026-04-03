@@ -26,7 +26,7 @@
     </div>
 
     <script>
-        function ejecutarFetch() {
+       function ejecutarFetch() {
             const cedula = document.getElementById('cedulaInput').value;
             const resDiv = document.getElementById('resultado');
             const loader = document.getElementById('loading');
@@ -36,27 +36,43 @@
             resDiv.innerHTML = "";
             loader.classList.remove('d-none');
 
-            // REEMPLAZA ESTA URL POR LA QUE COPIASTE DE GOOGLE
-            
+            // URL Corregida con el signo "?"
             const urlApi = "https://script.google.com/macros/s/AKfycbznbJHsK-s1v-vWPRnlNDLNtg54k7kQrBvbynlB4ImBb-dwx_xTIH3WVcetw8-1Q4fp/exec?cedula=" + cedula;
+
             fetch(urlApi)
                 .then(response => response.json())
                 .then(data => {
                     loader.classList.add('d-none');
+                    
                     if(data.encontrado) {
-                        resDiv.innerHTML = `
-                            <div class="alert alert-success">
-                                <strong>Funcionario:</strong> ${data.nombre}<br>
-                                <strong>Registros:</strong> ${data.lista.length}
-                            </div>`;
+                        // 1. Ponemos el nombre del funcionario arriba
+                        let html = `<h4 class="text-primary mb-3">${data.nombre}</h4><hr>`;
+                        
+                        // 2. RECORREMOS LA LISTA (Aquí es donde ocurre la magia)
+                        data.lista.forEach(item => {
+                            // Elegimos el color del badge según el estado
+                            const colorClass = item.estado === "Disfrutado" ? "bg-success" : "bg-secondary";
+                            
+                            html += `
+                                <div class="mb-3 p-3 border-bottom shadow-sm bg-white rounded">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-1"><strong>${item.nombre}</strong></h6>
+                                        <span class="badge ${colorClass}">${item.estado}</span>
+                                    </div>
+                                    <small class="text-muted">📅 Fecha: ${item.fecha || '---'}</small><br>
+                                    ${item.obs ? `<small class="text-dark">📝 Obs: ${item.obs}</small>` : ''}
+                                </div>`;
+                        });
+                        
+                        resDiv.innerHTML = html;
                     } else {
-                        resDiv.innerHTML = `<div class="alert alert-danger">No encontrado en la copia.</div>`;
+                        resDiv.innerHTML = `<div class="alert alert-danger">No se encontró funcionario en la base de datos.</div>`;
                     }
                 })
                 .catch(error => {
                     loader.classList.add('d-none');
                     console.error("Error:", error);
-                    alert("Error de conexión. Revisa la consola (F12).");
+                    alert("Error de conexión. Revisa que el script esté publicado como 'Cualquier persona'.");
                 });
         }
     </script>
