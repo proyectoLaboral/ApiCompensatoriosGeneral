@@ -59,7 +59,7 @@
                                         <h6 class="mb-1"><strong>${item.nombre}</strong></h6>
                                         <span class="badge ${colorClass}">${item.estado}</span>
                                     </div>
-                                    <small class="text-muted">📅 Fecha: ${item.fecha || '---'}</small><br>
+                                    <small class="text-muted">📅 Fecha: ${String(item.fecha).trim() || '---'}</small>
                                     ${item.obs ? `<small class="text-dark">📝 Obs: ${item.obs}</small>` : ''}
                                 </div>`;
                         });
